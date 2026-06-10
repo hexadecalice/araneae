@@ -5,9 +5,11 @@ Araneae is a CLI directory scanner for web applications.
 I designed Araneae as a side project to try to familiarize myself with Java's syntax for one of my classes.
 As such, I probably won't be updating it very often.
 
-It's functionality is extremely straight forward. It takes in a wordlist file, with each word seperated by a newline.
-It then appends each word to the end of a specified website as a directory (like, www.website.com/word), and records the status code returned.
-It logs the status codes and prints them to the terminal.
+It's functionality is extremely straight forward. It takes in a wordlist file, with each word seperated by a newline. 
+It then appends each word to the end of a specified website as a directory (like, www.website.com/word), and records the status code returned. 
+It's designed to try to use lightweight HEAD requests first, but if it's given a 405 status it fallsback to a GET request. 
+It logs the status codes and prints them to the terminal. 
+
 This operation is currently single-threaded, but that may change. 
 
 Before performing the scan, Araneae generates a UUID and similarly appends that as a directory. 
@@ -19,11 +21,11 @@ If one is found, the result is discarded, if not then its logged as a legitimate
 
 The soft 404 detection is - quite frankly - over engineered to shit.
 If I remember correctly, one particular website was driving me insane by returning all 200's, and I added that feature as a result.
-Again, I doubt this project will see many updates, but thanks to everyone who gave it a look!  
+Again, I doubt this project will see many updates, but thanks to everyone who gives it a look!  
 
 ## Prerequisites
 To build and run Araneae, you will need the following installed on your system:
-* **Java Development Kit (JDK) 17** or higher
+* **Java Development Kit (JDK) 21** or higher
 * **Apache Maven**
 
 ## Building from Source
@@ -37,4 +39,4 @@ To build and run Araneae, you will need the following installed on your system:
 ## Running the Scanner
 You can execute the application directly via Maven:
 `mvn exec:java -Dexec.args="your_wordlist.txt targetwebsite.com"`
-
+Currently Araneae only scans websites, your formatting must be websitename.com for the tool to work.
