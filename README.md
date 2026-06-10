@@ -26,8 +26,7 @@ Again, I doubt this project will see many updates, but thanks to everyone who gi
 
 ## Prerequisites
 To build and run Araneae, you will need the following installed on your system:
-* **Java Development Kit (JDK) 21** or higher
-* **Apache Maven**
+* **Java Development Kit (JDK) 17** or higher
 
 ## Building from Source
 1. Clone the repository and navigate into the directory:
