@@ -36,4 +36,5 @@ To build and run Araneae, you will need the following installed on your system:
 
 ## Running the Scanner
 You can execute the application directly via Maven:
-`mvn exec:java -Dexec.args="[YOUR ARGUMENTS HERE]"`
+`mvn exec:java -Dexec.args="your_wordlist.txt targetwebsite.com"`
+
