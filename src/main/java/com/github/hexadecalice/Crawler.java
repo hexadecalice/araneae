@@ -112,8 +112,8 @@ public class Crawler {
                         long contentLength = Long.parseLong(strLength); 
                         
                         //Checks if the 200 has the same content-length header as the soft 404
-                        //The +/- 100 is because URL length can affect the web page, its definitely an arbitrary value
-                        //I'll eventually put these numbers in some kind of config filr
+                        //The +/- byteBuffer is because URL length can affect the web page, its definitely an arbitrary value
+                        //I'll eventually put these numbers in some kind of config file (maybe)
                         if(contentLength < (spoofLength+byteBuffer) && contentLength >= (spoofLength-byteBuffer)) { 
                             continue;
                         }
