@@ -12,6 +12,7 @@ import java.util.HashSet;
 import java.util.UUID;
 import java.util.Optional;
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 
 public class Crawler { 
@@ -42,6 +43,8 @@ public class Crawler {
     
     static String agentValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0";
     static int byteBuffer = 300;
+    static int timeoutValue = 10; 
+    static int jitter = 500; 
     public static void crawl(HashSet<String> wordList, String hostName) throws Exception {  
         
         HttpClient myClient = HttpClient.newBuilder()
@@ -55,40 +58,47 @@ public class Crawler {
 		
         
         String randomString = UUID.randomUUID().toString();
-       
-        HttpRequest soft404Tester = HttpRequest.newBuilder()
+       try { 
+            HttpRequest soft404Tester = HttpRequest.newBuilder()
                                     .header("User-Agent",agentValue)
                                     .uri(URI.create("https://www." + hostName + "/" + randomString))
-                                    .timeout(Duration.ofSeconds(2))
+                                    .timeout(Duration.ofSeconds(timeoutValue))
                                     .method("HEAD", BodyPublishers.noBody())
                                     .build();
-        System.out.println(randomString);
+            System.out.println("UUID Generated: " + randomString);
         
-        HttpResponse<Void> spoofResponse = myClient.send(soft404Tester, BodyHandlers.discarding());
-        int spoofStatus = spoofResponse.statusCode();
+            HttpResponse<Void> spoofResponse = myClient.send(soft404Tester, BodyHandlers.discarding());
+            int spoofStatus = spoofResponse.statusCode();
 
-        if(spoofStatus == 200) { 
+            if(spoofStatus == 200) { 
             Optional<String> spoofLengthBox = spoofResponse.headers().firstValue("Content-Length"); 
             if(spoofLengthBox.isPresent()) { 
                 String spoofLengthStr = spoofLengthBox.get();
                 spoofLength = Long.parseLong(spoofLengthStr); 
                 soft404 = true;
             }else { 
-                System.out.println("Spoof request didn't receive content length header, 200 status codes may be soft 404's");  
+                System.out.println("Spoof request didn't receive content length header or timed out, 200 status codes may be soft 404's");  
             }
         }
+        }
+        catch(Exception e) { 
+            System.out.println("Spoof packet timed out, website may be blocking scan.");
+
+        }
+
+
+       
 		
             
         
         for(String dir : wordList){ 
-            
+            TimeUnit.MILLISECONDS.sleep(jitter);
             try { 
-                
                 //head request 
                 HttpRequest request = HttpRequest.newBuilder() 
                     .header("User-Agent", agentValue)
                     .uri(URI.create("https://www." + hostName + "/" + dir))
-                    .timeout(Duration.ofSeconds(2))
+                    .timeout(Duration.ofSeconds(timeoutValue))
                     .method("HEAD", BodyPublishers.noBody())
                     .build(); 
                  
@@ -96,13 +106,19 @@ public class Crawler {
                  HttpRequest deepRequest = HttpRequest.newBuilder() 
                     .header("User-Agent", agentValue)
                     .uri(URI.create("https://www." + hostName + "/" + dir))
-                    .timeout(Duration.ofSeconds(2))
+                    .timeout(Duration.ofSeconds(timeoutValue))
                     .GET()
                     .build();
                     
                 //Send the request, and discards whatever body might be in the response
                 HttpResponse<Void> response = myClient.send(request, BodyHandlers.discarding());
-                int statusCode = response.statusCode(); 
+
+                if(response.statusCode() == 405) { 
+                    response = myClient.send(deepRequest, BodyHandlers.discarding());
+
+                }
+                int statusCode = response.statusCode();
+
                 
                 //Checks to ensure that the 200 status code is real by comparing content length headers 
                 if(soft404){ 
