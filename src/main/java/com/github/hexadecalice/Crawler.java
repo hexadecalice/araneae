@@ -110,7 +110,6 @@ public class Crawler {
                     .GET()
                     .build();
                     
-                //Send the request, and discards whatever body might be in the response
                 HttpResponse<Void> response = myClient.send(request, BodyHandlers.discarding());
 
                 if(response.statusCode() == 405) { 

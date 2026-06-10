@@ -15,8 +15,8 @@ This operation is currently single-threaded, but that may change.
 
 Before performing the scan, Araneae generates a UUID and similarly appends that as a directory.   
 This is done to detect if a website uses "soft 404"s.  
-If the UUID directory returns a 200 status code, the content-length is logged.  
-All future 200 status codes are checked against that content length, if its within an arbitrary number of bytes, its discardeed with the 404s.  
+If the UUID directory returns a 200 status code, the content-length is logged and soft404 is set to true.  
+All future 200 status codes are checked against that content length, if its within an arbitrary number of bytes, its discarded with the 404s.  
 If the content-length doesn't match, the page is downloaded and scanned for a list of 404-page related words.  
 If one is found, the result is discarded, if not then its logged as a legitimate 200.  
 
@@ -38,7 +38,7 @@ To build and run Araneae, you will need the following installed on your system:
    `mvn clean compile`
 
 ## Running the Scanner
-You can execute the application directly via Maven:
-`mvn exec:java -Dexec.args="your_wordlist.txt targetwebsite.com"`
+You can run the scanner by using the following command:
+`java -cp out com.github.hexadecalice.Main wordlist.txt targetwebsite.com`
 
-Currently Araneae only scans websites, your formatting must be websitename.com for the tool to work.
+Note: hostnames should be formatted as `hostname.com` without a protocol or www. prefix
