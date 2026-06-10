@@ -6,12 +6,12 @@ I designed Araneae as a side project to try to familiarize myself with Java's sy
 As such, I probably won't be updating it very often.
 
 It's functionality is extremely straight forward. It takes in a wordlist file, with each word seperated by a newline.
-It then appends each word to the end of a specified website, and records the status code returned.
+It then appends each word to the end of a specified website as a directory (like, www.website.com/word), and records the status code returned.
 It logs the status codes and prints them to the terminal.
 This operation is currently single-threaded, but that may change. 
 
 Before performing the scan, Araneae generates a UUID and similarly appends that as a directory. 
-This is done to detect if a website uses "soft 404"s. 
+This is done to detect if a website uses "soft 404"s.
 If the UUID directory returns a 200 status code, the content-length is logged.
 All future 200 status codes are checked against that content length, if its within an arbitrary number of bytes, its discardeed with 404s.
 If the content-length doesn't match, the page is downloaded and scanned for a list of 404-page related words.

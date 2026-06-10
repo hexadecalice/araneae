@@ -7,7 +7,7 @@ import java.net.ConnectException;
     {
 		try{ 
 			HashSet<String> results = FileUtils.readWordList("wordlist.txt");
-			Crawler.crawl(results, "theracoonlady.com");
+			Crawler.crawl(results, "portswigger.net");	
 		}
 		catch(ConnectException e){ 
 			System.out.println("Couldn't connnect to host, check your internet and URL format.");

@@ -38,6 +38,10 @@ public class Crawler {
         "sorry, we couldn't find that page",
         "the page cannot be found"
     ));
+
+    
+    static String agentValue = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0";
+    static int byteBuffer = 300;
     public static void crawl(HashSet<String> wordList, String hostName) throws Exception {  
         
         HttpClient myClient = HttpClient.newBuilder()
@@ -46,14 +50,14 @@ public class Crawler {
         
         //Sends request to a directory that doesnt exist, if it returns 200, save the content-length header
         //This will be used against future 200 status codes to ensure they're real
-        boolean soft404 = true;                            
+        boolean soft404 = false;                            
         long spoofLength = -1; 
 		
         
         String randomString = UUID.randomUUID().toString();
        
         HttpRequest soft404Tester = HttpRequest.newBuilder()
-                                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0")
+                                    .header("User-Agent",agentValue)
                                     .uri(URI.create("https://www." + hostName + "/" + randomString))
                                     .timeout(Duration.ofSeconds(2))
                                     .method("HEAD", BodyPublishers.noBody())
@@ -79,16 +83,18 @@ public class Crawler {
         for(String dir : wordList){ 
             
             try { 
-                //Creates the http request, tries to make it stealthy with user agent 
+                
+                //head request 
                 HttpRequest request = HttpRequest.newBuilder() 
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0")
+                    .header("User-Agent", agentValue)
                     .uri(URI.create("https://www." + hostName + "/" + dir))
                     .timeout(Duration.ofSeconds(2))
                     .method("HEAD", BodyPublishers.noBody())
                     .build(); 
-                    
+                 
+                 //requests entire page contents   
                  HttpRequest deepRequest = HttpRequest.newBuilder() 
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0")
+                    .header("User-Agent", agentValue)
                     .uri(URI.create("https://www." + hostName + "/" + dir))
                     .timeout(Duration.ofSeconds(2))
                     .GET()
@@ -107,7 +113,8 @@ public class Crawler {
                         
                         //Checks if the 200 has the same content-length header as the soft 404
                         //The +/- 100 is because URL length can affect the web page, its definitely an arbitrary value
-                        if(contentLength < (spoofLength+300) && contentLength >= (spoofLength-300)) { 
+                        //I'll eventually put these numbers in some kind of config filr
+                        if(contentLength < (spoofLength+byteBuffer) && contentLength >= (spoofLength-byteBuffer)) { 
                             continue;
                         }
                         else {
