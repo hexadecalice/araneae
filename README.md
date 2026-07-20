@@ -34,10 +34,10 @@ To build and run Araneae, you will need the following installed on your system:
    `cd araneae`
 
 2. Compile the project and download dependencies:
-   `mvn clean compile`
+   `javac /src/main/com/github/hexadecalice/*.java`
 
 ## Running the Scanner
 You can run the scanner by using the following command:
-`java -cp out com.github.hexadecalice.Main wordlist.txt targetwebsite.com`
+`java com.github.hexadecalice.Main /path/to/wordlist.txt targetwebsite.com`
 
 Note: hostnames should be formatted as `hostname.com` without a protocol or www. prefix
